@@ -13,7 +13,8 @@ static function X2AbilityTemplate addReturnFirePrimary()
 	local X2AbilityTemplate						Template;
 	local X2AbilityTargetStyle                  TargetStyle;
 	local X2AbilityTrigger						Trigger;
-	local X2Effect_CoveringFire              FireEffect;
+	local X2Effect_CoveringFire                 CoveringFireEffect;
+	local X2Condition_AbilityProperty           CoveringFireCondition;
 
 	`CREATE_X2ABILITY_TEMPLATE(Template, 'ReturnFirePrimary');
 	Template.IconImage = "img:///UILibrary_PerkIcons.UIPerk_returnfire";
@@ -30,11 +31,22 @@ static function X2AbilityTemplate addReturnFirePrimary()
 	Trigger = new class'X2AbilityTrigger_UnitPostBeginPlay';
 	Template.AbilityTriggers.AddItem(Trigger);
 
-	//FireEffect = new class'returnFirePrimary_Effect';
-	FireEffect = new class'X2Effect_CoveringFire';
-	FireEffect.BuildPersistentEffect(1, true, false, false, eGameRule_PlayerTurnBegin);
-	FireEffect.SetDisplayInfo(ePerkBuff_Passive, Template.LocFriendlyName, Template.GetMyLongDescription(), Template.IconImage,,,Template.AbilitySourceName);
-	Template.AddTargetEffect(FireEffect);
+//	//FireEffect = new class'returnFirePrimary_Effect';
+//	FireEffect = new class'X2Effect_CoveringFire';
+//
+	//fireeffect.buildpersistenteffect(1, true, false, false, egamerule_playerturnbegin);
+	//fireeffect.setdisplayinfo(eperkbuff_passive, template.locfriendlyname, template.getmylongdescription(), template.iconimage,,,template.abilitysourcename);
+	//template.addtargeteffect(fireeffect);
+//
+	CoveringFireEffect = new class'X2Effect_CoveringFire';
+	CoveringFireEffect.AbilityToActivate = 'OverwatchShot';
+	CoveringFireEffect.BuildPersistentEffect(1, false, true, false, eGameRule_PlayerTurnBegin);
+
+	CoveringFireCondition = new class'X2Condition_AbilityProperty';
+	CoveringFireCondition.OwnerHasSoldierAbilities.AddItem('ReturnFirePrimary');
+	CoveringFireEffect.TargetConditions.AddItem(CoveringFireCondition);
+	Template.AddTargetEffect(CoveringFireEffect);
+
 
 	Template.BuildNewGameStateFn = TypicalAbility_BuildGameState;
 	//  NOTE: No visualization on purpose!
